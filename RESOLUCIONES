@@ -1,0 +1,75 @@
+-- Listar todos los alumnos en el curso guitarra intermedio
+
+SELECT a.nombre, a.apellido
+FROM alumnos a
+JOIN inscripciones i ON i.id_alumno = a.id_alumno
+JOIN cursos c ON i.id_curso = c.id_curso
+WHERE c.nombre = 'Guitarra Intermedio';
+
+-- Mostrar todas las inscripciones realizadas despues del 1 de enero de 2024
+
+SELECT * 
+FROM inscripciones 
+WHERE fecha_inscripcion > '2024-01-01'
+
+-- Contar la cantidad de alumnos que han abonado la inscripcion
+
+SELECT COUNT(DISTINCT id_alumno)
+FROM inscripciones
+WHERE abono_inscripcion = 'SI';
+
+-- Listar los cursos disponibles para alumnos avanzados
+
+SELECT *
+FROM cursos
+WHERE nivel = 'Avanzado';
+
+-- Listar los nombres y apellidos de los alumnos junto con los cursos a los que se han inscripto
+
+SELECT a.nombre, a.apellido, c.nombre AS curso
+FROM alumnos a
+JOIN inscripciones i ON i.id_alumno = a.id_alumno
+JOIN cursos c ON i.id_curso = c.id_curso;
+
+--Obtener el nombre y apellido de los alumnos que están inscritos en más de un curso. 
+
+SELECT nombre, apellido
+FROM alumnos
+WHERE id_alumno IN (
+SELECT id_alumno
+FROM inscripciones
+GROUP BY id_alumno
+HAVING COUNT(id_curso) > 1
+);
+
+-- Mostrar el nombre del curso y la cantidad de alumnos inscritos en cada curso.
+
+SELECT c.nombre, COUNT(i.id_alumno)
+FROM cursos c
+JOIN inscripciones i ON c.id_curso = i.id_curso
+GROUP BY c.nombre;
+
+
+-- Mostrar los alumnos que no han abonado la inscripción. 
+
+SELECT a.nombre, a.apellido
+FROM alumnos a
+JOIN inscripciones i ON a.id_alumno = i.id_alumno
+WHERE i.abono_inscripcion = 'NO';
+
+
+-- Lista de todos los nombres de los cursos que tienen al menos un alumno mayor de 20 años inscrito. 
+
+SELECT DISTINCT c.nombre
+FROM cursos c
+JOIN inscripciones i ON c.id_curso = i.id_curso
+JOIN alumnos a ON i.id_alumno = a.id_alumno
+WHERE (julianday('now') - julianday(a.fecha_nacimiento)) / 365 >= 20;
+
+-- Todos los nombres y apellidos de los alumnos junto con los nombres de los cursos en los que están inscritos, pero solo para aquellos que se inscribieron en 2024
+
+SELECT a.nombre, a.apellido, c.nombre AS curso
+FROM alumnos a
+JOIN inscripciones i ON a.id_alumno = i.id_alumno
+JOIN cursos c ON c.id_curso = i.id_curso
+WHERE i.fecha_inscripcion >= '2024-01-01';
