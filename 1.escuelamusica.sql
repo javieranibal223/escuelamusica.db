@@ -1,5 +1,3 @@
--- SQLITE3
-
 -- Crear tabla de alumnos
 CREATE TABLE alumnos (
     id_alumno INTEGER PRIMARY KEY AUTOINCREMENT,
